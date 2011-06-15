@@ -544,10 +544,6 @@ class Form implements \IteratorAggregate, FormInterface
         $event = new DataEvent($this, $clientData);
         $this->dispatcher->dispatch(FormEvents::POST_BIND, $event);
 
-        foreach ($this->validators as $validator) {
-            $validator->validate($this);
-        }
-
         return $this;
     }
 
@@ -668,6 +664,8 @@ class Form implements \IteratorAggregate, FormInterface
      */
     public function isValid()
     {
+        $this->validate();
+
         if (!$this->isBound() || $this->hasErrors()) {
 
             return false;
@@ -683,6 +681,20 @@ class Form implements \IteratorAggregate, FormInterface
         }
 
         return true;
+    }
+
+    /**
+     * Validates the form
+     * 
+     * @return Form the current form
+     */
+    public function validate()
+    {
+        foreach ($this->validators as $validator) {
+            $validator->validate($this);
+        }
+        
+        return $this;
     }
 
     /**
