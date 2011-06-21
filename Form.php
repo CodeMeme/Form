@@ -666,7 +666,7 @@ class Form implements \IteratorAggregate, FormInterface
     {
         $this->validate();
 
-        if (!$this->isBound() || $this->hasErrors()) {
+        if ($this->hasErrors()) {
 
             return false;
         }
