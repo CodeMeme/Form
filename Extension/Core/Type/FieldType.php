@@ -20,6 +20,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Extension\Core\EventListener\TrimListener;
 use Symfony\Component\Form\Extension\Core\Validator\DefaultValidator;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Form\Exception\FormException;
 
 class FieldType extends AbstractType
 {
@@ -37,6 +38,9 @@ class FieldType extends AbstractType
         } else {
             $options['property_path'] = new PropertyPath($options['property_path']);
         }
+        if (!is_array($options['attr'])) {
+            throw new FormException('The "attr" option must be "array".');
+        }
 
         $builder
             ->setRequired($options['required'])
@@ -49,6 +53,7 @@ class FieldType extends AbstractType
             ->setAttribute('max_length', $options['max_length'])
             ->setAttribute('pattern', $options['pattern'])
             ->setAttribute('label', $options['label'] ?: $this->humanize($builder->getName()))
+            ->setAttribute('attr', $options['attr'] ?: array())
             ->setData($options['data'])
             ->addValidator(new DefaultValidator())
         ;
@@ -76,7 +81,7 @@ class FieldType extends AbstractType
         }
 
         $types = array();
-        foreach (array_reverse((array) $form->getTypes()) as $type) {
+        foreach ($form->getTypes() as $type) {
             $types[] = $type->getName();
         }
 
@@ -94,7 +99,7 @@ class FieldType extends AbstractType
             ->set('size', null)
             ->set('label', $form->getAttribute('label'))
             ->set('multipart', false)
-            ->set('attr', array())
+            ->set('attr', $form->getAttribute('attr'))
             ->set('types', $types)
         ;
     }
@@ -117,6 +122,7 @@ class FieldType extends AbstractType
             'error_bubbling'    => false,
             'error_mapping'     => array(),
             'label'             => null,
+            'attr'              => array(),
         );
 
         $class = isset($options['data_class']) ? $options['data_class'] : null;
