@@ -599,8 +599,12 @@ class Form implements \IteratorAggregate, FormInterface
      *
      * @return Form The current form
      */
-    public function addError(FormError $error)
+    public function addError($error, array $messageParameters = array())
     {
+        if (! $error instanceof FormError) {
+            $error = new FormError($error, $messageParameters);
+        }
+        
         if ($this->parent && $this->errorBubbling) {
             $this->parent->addError($error);
         } else {

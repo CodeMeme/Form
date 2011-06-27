@@ -148,7 +148,7 @@ interface FormInterface extends \ArrayAccess, \Traversable, \Countable
      *
      * @param FormError $error
      */
-    function addError(FormError $error);
+    function addError($error);
 
     /**
      * Returns whether the form is valid.
